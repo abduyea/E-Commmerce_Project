@@ -95,9 +95,22 @@ Comment (Required)
 All relationships use Crow’s-foot notation with clearly defined minimum and maximum cardinalities.
 
  Customer  to  Order (one or many)
+
+ 
  Order     to Transaction (one or more)
+
+ 
  Product   to  Inventory (1 to many)
+
+ 
  Product   to reviewed in Review (one  or many)
+
+ 
  Customer  to  Review (one to many )
+
+ 
  Category  to  Product (zero or more)
+
+ 
  User      to  admine  (supertye and subtype)
+ 
