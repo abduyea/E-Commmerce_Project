@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Customers (
     CustomerID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT UNIQUE NOT NULL,
-    Address VARCHAR(255) NOT NULL,
+    Address TEXT NOT NULL,
     FOREIGN KEY (UserID)
         REFERENCES Users (UserID)
         ON DELETE CASCADE
@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS Products (
     Category ENUM('Electronics', 'Clothing', 'Home', 'Books', 'Other'),
     CostPrice DECIMAL(10 , 2 ) NOT NULL,
     RetailPrice DECIMAL(10 , 2 ) NOT NULL,
-    StockQuantity INT NOT NULL CHECK (StockQuantity >= 0),
-    is_discontinued BOOLEAN DEFAULT FALSE
+    StockQuantity INT NOT NULL CHECK (StockQuantity >= 0)
 );
 
 -- Create Order table
@@ -38,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Orders (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
     CustomerID INT NOT NULL,
     OrderDate DATETIME NOT NULL,
-    OrderStatus ENUM('Cancelled','Unpaid','Paid','Shipped','Fulfilled') NOT NULL DEFAULT 'Unpaid',
+    OrderStatus ENUM('Cancelled','Unpaid','Paid','Shipped','Fulfilled') NOT NULL,
     FOREIGN KEY (CustomerID)
         REFERENCES Customers (CustomerID)
         ON DELETE CASCADE
@@ -61,20 +60,20 @@ CREATE TABLE IF NOT EXISTS LineItems (
     ProductID INT NOT NULL,
     LinePrice DECIMAL(10 , 2 ) NOT NULL,
     Quantity INT NOT NULL CHECK (Quantity > 0),
-    PRIMARY KEY (OrderID , ProductID),
+    PRIMARY KEY (PaymentID , ProductID),
     FOREIGN KEY (OrderID)
         REFERENCES Orders (OrderID)
         ON DELETE CASCADE,
     FOREIGN KEY (ProductID)
         REFERENCES Products (ProductID)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
 );
 
 -- Create Review table
 CREATE TABLE IF NOT EXISTS Reviews (
     ReviewID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT,
-    OrderID INT,
+    UserID INT NOT NULL,
+    OrderID INT NOT NULL,
     ProductID INT NOT NULL,
     Rating FLOAT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
     ReviewText TEXT,
@@ -84,7 +83,7 @@ CREATE TABLE IF NOT EXISTS Reviews (
         ON DELETE CASCADE,
     FOREIGN KEY (OrderID)
         REFERENCES Orders (OrderID)
-        ON DELETE SET NULL,
+        ON DELETE CASCADE,
     FOREIGN KEY (ProductID)
         REFERENCES Products (ProductID)
         ON DELETE CASCADE
@@ -117,7 +116,7 @@ INSERT INTO Customers (UserID, Address) VALUES
 (10, '482 Broadway, New York, NY');
 
 -- Insert sample products
-INSERT INTO Products (ProductName, Description, Category, CostPrice, RetailPrice, StockQuantity) VALUES
+INSERT INTO Products (Name, Description, Category, Cost, MSRP, StockQuantity) VALUES
 ('Smartphone X', 'Latest smartphone with advanced features', 'Electronics', 500.00, 799.99, 50),
 ('Laptop Pro', 'High-performance laptop for professionals', 'Electronics', 800.00, 1299.99, 30),
 ('Wireless Headphones', 'Noise-cancelling wireless headphones', 'Electronics', 100.00, 199.99, 100),
@@ -142,7 +141,7 @@ INSERT INTO Orders (CustomerID, OrderDate) VALUES
 (9, '2023-11-09 10:05:00'),
 (10, '2023-11-10 14:15:00');
 
--- Insert sample payments 
+-- Insert sample transactions 
 INSERT INTO Payments (OrderID, PaymentAmount, PaymentDate) VALUES
 (1, 799.99, '2023-11-01 10:20:00'),
 (2, 1299.99, '2023-11-02 14:35:00'),
@@ -208,36 +207,36 @@ WHERE
 
 -- 5. Most popular products for a time range
 SELECT 
-    p.ProductID, p.ProductName, SUM(li.Quantity) AS TotalSold
+    p.ProductID, p.Name, SUM(li.Quantity) AS TotalSold
 FROM
     Products p
         JOIN
     LineItems li ON p.ProductID = li.ProductID
         JOIN
-    Payments t ON li.OrderID = t.OrderID
+    Payments t ON li.PaymentID = t.PaymentID
         JOIN
     Orders o ON t.OrderID = o.OrderID
 WHERE
     o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
-GROUP BY p.ProductID , p.ProductName
+GROUP BY p.ProductID , p.Name
 ORDER BY TotalSold DESC
 LIMIT 5;
 
 -- 6. Least popular products for a time range
 SELECT 
     p.ProductID,
-    p.ProductName,
+    p.Name,
     COALESCE(SUM(li.Quantity), 0) AS TotalSold
 FROM
     Products p
         LEFT JOIN
     LineItems li ON p.ProductID = li.ProductID
         LEFT JOIN
-    Payments t ON li.PaymentID = t.PaymentID
+    Transactions t ON li.TransactionID = t.TransactionID
         LEFT JOIN
     Orders o ON t.OrderID = o.OrderID
         AND o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
-GROUP BY p.ProductID , p.ProductName
+GROUP BY p.ProductID , p.Name
 ORDER BY TotalSold ASC
 LIMIT 5;
 
@@ -267,13 +266,13 @@ WITH InactiveUsers AS (
     GROUP BY u.UserID, c.CustomerID
     HAVING MAX(o.OrderDate) IS NULL OR MAX(o.OrderDate) < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
 )
-SELECT iu.UserID, p.ProductID, p.ProductName, COUNT(*) AS PurchaseCount
+SELECT iu.UserID, p.ProductID, p.Name, COUNT(*) AS PurchaseCount
 FROM InactiveUsers iu
 JOIN Orders o ON iu.CustomerID = o.CustomerID
-JOIN Payments t ON o.OrderID = t.OrderID
+JOIN Transactions t ON o.OrderID = t.OrderID
 JOIN LineItems li ON t.OrderID = li.OrderID
 JOIN Products p ON li.ProductID = p.ProductID
 WHERE o.OrderDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH) -- only *historical* purchasescustomersCustomerID
-GROUP BY iu.UserID, p.ProductID, p.ProductName
+GROUP BY iu.UserID, p.ProductID, p.Name
 ORDER BY iu.UserID, PurchaseCount DESC;
 
