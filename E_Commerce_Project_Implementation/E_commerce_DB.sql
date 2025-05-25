@@ -1,4 +1,5 @@
 -- Create the database
+DROP DATABASE IF EXISTS ECommerceDB;
 CREATE DATABASE IF NOT EXISTS ECommerceDB;
 USE ECommerceDB;
 -- Create User table
@@ -67,7 +68,7 @@ CREATE TABLE IF NOT EXISTS LineItems (
         ON DELETE CASCADE,
     FOREIGN KEY (ProductID)
         REFERENCES Products (ProductID)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
 );
 
 -- Create Review table
@@ -183,15 +184,15 @@ INSERT INTO Reviews (UserID, OrderID, ProductID, Rating, ReviewText, ReviewDate)
 
 -- 1. List products currently in inventory
 SELECT 
-    ProductID, Name, StockQuantity
+    ProductID, ProductName, StockQuantity
 FROM
     Products
 WHERE
     StockQuantity > 0
-ORDER BY Name;
+ORDER BY ProductName;
 
 -- 2. Create new product
-INSERT INTO Products (Name, Description, Category, Cost, MSRP, StockQuantity) 
+INSERT INTO Products (ProductName, Description, Category, CostPrice, RetailPrice, StockQuantity) 
 VALUES ('Bluetooth Speaker', 'Portable wireless speaker with high-fidelity sound', 'Electronics', 25.00, 59.99, 40);
 
 -- 3. Modify product inventory amount
@@ -211,12 +212,12 @@ SELECT
     p.ProductID, p.ProductName, SUM(li.Quantity) AS TotalSold
 FROM
     Products p
-        JOIN
-    LineItems li ON p.ProductID = li.ProductID
-        JOIN
-    Payments t ON li.OrderID = t.OrderID
-        JOIN
-    Orders o ON t.OrderID = o.OrderID
+        JOIN LineItems li 
+			ON p.ProductID = li.ProductID
+        JOIN Payments t 
+			ON li.OrderID = t.OrderID
+        JOIN Orders o 
+			ON t.OrderID = o.OrderID
 WHERE
     o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
 GROUP BY p.ProductID , p.ProductName
@@ -230,12 +231,10 @@ SELECT
     COALESCE(SUM(li.Quantity), 0) AS TotalSold
 FROM
     Products p
-        LEFT JOIN
-    LineItems li ON p.ProductID = li.ProductID
-        LEFT JOIN
-    Payments t ON li.PaymentID = t.PaymentID
-        LEFT JOIN
-    Orders o ON t.OrderID = o.OrderID
+        LEFT JOIN LineItems li
+			ON p.ProductID = li.ProductID
+        LEFT JOIN Orders o
+			ON li.OrderID = o.OrderID
         AND o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
 GROUP BY p.ProductID , p.ProductName
 ORDER BY TotalSold ASC
@@ -249,10 +248,10 @@ SELECT
     MAX(o.OrderDate) AS LastPurchaseDate
 FROM
     Users u
-        JOIN
-    Customers c ON u.UserID = c.UserID
-        LEFT JOIN
-    Orders o ON c.CustomerID = o.CustomerID
+        JOIN Customers c
+			ON u.UserID = c.UserID
+        LEFT JOIN Orders o
+			ON c.CustomerID = o.CustomerID
 GROUP BY u.UserID , u.Email , u.Username
 HAVING LastPurchaseDate IS NULL
     OR LastPurchaseDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
@@ -262,17 +261,21 @@ ORDER BY LastPurchaseDate;
 WITH InactiveUsers AS (
     SELECT u.UserID, c.CustomerID
     FROM Users u
-    JOIN Customers c ON u.UserID = c.UserID
-    LEFT JOIN Orders o ON c.CustomerID = o.CustomerID
+    JOIN Customers c 
+		ON u.UserID = c.UserID
+    LEFT JOIN Orders o 
+		ON c.CustomerID = o.CustomerID
     GROUP BY u.UserID, c.CustomerID
     HAVING MAX(o.OrderDate) IS NULL OR MAX(o.OrderDate) < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
 )
 SELECT iu.UserID, p.ProductID, p.ProductName, COUNT(*) AS PurchaseCount
 FROM InactiveUsers iu
-JOIN Orders o ON iu.CustomerID = o.CustomerID
-JOIN Payments t ON o.OrderID = t.OrderID
-JOIN LineItems li ON t.OrderID = li.OrderID
-JOIN Products p ON li.ProductID = p.ProductID
+JOIN Orders o 
+	ON iu.CustomerID = o.CustomerID
+JOIN LineItems li 
+	ON li.OrderID = li.OrderID
+JOIN Products p 
+	ON li.ProductID = p.ProductID
 WHERE o.OrderDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH) -- only *historical* purchasescustomersCustomerID
 GROUP BY iu.UserID, p.ProductID, p.ProductName
 ORDER BY iu.UserID, PurchaseCount DESC;
