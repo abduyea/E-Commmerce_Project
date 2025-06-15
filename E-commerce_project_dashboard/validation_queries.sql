@@ -1,6 +1,6 @@
 /***********************************************************************
 E-Commerce Dashboard Validation Queries
- Abdulfeatah Adem and Krick
+ Abdulfeatah Adem and Kirk
 
 
 ***********************************************************************/
