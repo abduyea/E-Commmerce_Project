@@ -16,8 +16,8 @@ WHERE
     p.StockQuantity > 0
 ORDER BY
     p.ProductName;
-![1749401166183](image/ValidationResultsDocument/1749401166183.png)
-![1749401296970](image/ValidationResultsDocument/1749401296970.png)
+
+![1750188726046](image/ValidationResultsDocument/1750188726046.png)
 
 2.  Which products have low stock levels?
 
@@ -32,8 +32,7 @@ WHERE
 ORDER BY
     p.StockQuantity ASC;
 
-![1749401456063](image/ValidationResultsDocument/1749401456063.png)
-![1749401505576](image/ValidationResultsDocument/1749401505576.png)
+![1750188797836](image/ValidationResultsDocument/1750188797836.png)
 
 
 3. Most popular products for a given time range
@@ -54,8 +53,7 @@ GROUP BY
 ORDER BY
     TotalQuantitySold DESC
 LIMIT 10;
-![1749401586764](image/ValidationResultsDocument/1749401586764.png)
-![1749401649302](image/ValidationResultsDocument/1749401649302.png)
+![1750188864027](image/ValidationResultsDocument/1750188864027.png)
 
 
 4.  Least popular products for a given time range
@@ -75,9 +73,7 @@ GROUP BY
 ORDER BY
     TotalQuantitySold ASC
 LIMIT 10;
-![1749401712689](image/ValidationResultsDocument/1749401712689.png)
-
-![1749401738914](image/ValidationResultsDocument/1749401738914.png)
+![1750188898328](image/ValidationResultsDocument/1750188898328.png)
 
 5. Which users haven't made a purchase in the last X months?
 
@@ -96,9 +92,7 @@ HAVING
     (MAX(o.OrderDate) IS NULL OR MAX(o.OrderDate) < DATE_SUB(CURDATE(), INTERVAL 6 MONTH))
 ORDER BY
     LastPurchaseDate ASC;
-![1749401907223](image/ValidationResultsDocument/1749401907223.png)
-![1749401928295](image/ValidationResultsDocument/1749401928295.png)
-
+![1750188951351](image/ValidationResultsDocument/1750188951351.png)
 6. What do those users typically purchase?
 
 SELECT
@@ -129,9 +123,7 @@ ORDER BY
     PurchaseCount DESC
 LIMIT 5;
 
-![1749402047904](image/ValidationResultsDocument/1749402047904.png)
-![1749402086860](image/ValidationResultsDocument/1749402086860.png)
-
+![1750188978038](image/ValidationResultsDocument/1750188978038.png)
  7. What are our newest products?
 
 
@@ -145,6 +137,8 @@ FROM
 ORDER BY
     p.CreatedDate DESC
 LIMIT 10;
+
+![1750189044146](image/ValidationResultsDocument/1750189044146.png)
 8. What categories are performing best?
 SELECT
     p.Category,
@@ -161,4 +155,4 @@ GROUP BY
 ORDER BY
     TotalRevenue DESC;
 
-![1749402360067](image/ValidationResultsDocument/1749402360067.png)
+![1750189073250](image/ValidationResultsDocument/1750189073250.png)
