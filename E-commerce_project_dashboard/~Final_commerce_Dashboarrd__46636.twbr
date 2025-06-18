@@ -41,31 +41,48 @@
           <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='orders' table='[orders]' type='table' />
           <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='lineitems' table='[lineitems]' type='table' />
           <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='products' table='[products]' type='table' />
+          <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='reviews' table='[reviews]' type='table' />
+          <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='products1' table='[products]' type='table' />
         </relation>
         <cols>
           <map key='[Address]' value='[customers].[Address]' />
+          <map key='[Category (products1)]' value='[products1].[Category]' />
           <map key='[Category]' value='[products].[Category]' />
+          <map key='[CostPrice (products1)]' value='[products1].[CostPrice]' />
           <map key='[CostPrice]' value='[products].[CostPrice]' />
           <map key='[CustomerID (orders)]' value='[orders].[CustomerID]' />
           <map key='[CustomerID]' value='[customers].[CustomerID]' />
+          <map key='[Description (products1)]' value='[products1].[Description]' />
           <map key='[Description]' value='[products].[Description]' />
           <map key='[Email]' value='[users].[Email]' />
           <map key='[LinePrice]' value='[lineitems].[LinePrice]' />
           <map key='[OrderDate]' value='[orders].[OrderDate]' />
           <map key='[OrderID (lineitems)]' value='[lineitems].[OrderID]' />
+          <map key='[OrderID (reviews)]' value='[reviews].[OrderID]' />
           <map key='[OrderID]' value='[orders].[OrderID]' />
           <map key='[OrderStatus]' value='[orders].[OrderStatus]' />
           <map key='[PasswordHash]' value='[users].[PasswordHash]' />
           <map key='[ProductID (products)]' value='[products].[ProductID]' />
+          <map key='[ProductID (products1)]' value='[products1].[ProductID]' />
+          <map key='[ProductID (reviews)]' value='[reviews].[ProductID]' />
           <map key='[ProductID]' value='[lineitems].[ProductID]' />
+          <map key='[ProductName (products1)]' value='[products1].[ProductName]' />
           <map key='[ProductName]' value='[products].[ProductName]' />
           <map key='[Quantity]' value='[lineitems].[Quantity]' />
+          <map key='[Rating]' value='[reviews].[Rating]' />
           <map key='[RegistrationDate]' value='[users].[RegistrationDate]' />
+          <map key='[RetailPrice (products1)]' value='[products1].[RetailPrice]' />
           <map key='[RetailPrice]' value='[products].[RetailPrice]' />
+          <map key='[ReviewDate]' value='[reviews].[ReviewDate]' />
+          <map key='[ReviewID]' value='[reviews].[ReviewID]' />
+          <map key='[ReviewText]' value='[reviews].[ReviewText]' />
+          <map key='[StockQuantity (products1)]' value='[products1].[StockQuantity]' />
           <map key='[StockQuantity]' value='[products].[StockQuantity]' />
           <map key='[UserID (customers)]' value='[customers].[UserID]' />
+          <map key='[UserID (reviews)]' value='[reviews].[UserID]' />
           <map key='[UserID]' value='[users].[UserID]' />
           <map key='[Username]' value='[users].[Username]' />
+          <map key='[is_discontinued (products1)]' value='[products1].[is_discontinued]' />
           <map key='[is_discontinued]' value='[products].[is_discontinued]' />
         </cols>
         <metadata-records>
@@ -494,6 +511,270 @@
             </attributes>
             <object-id>[products_9741205A5298407EBBA8B4B007BF5002]</object-id>
           </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ReviewID</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[ReviewID]</local-name>
+            <parent-name>[reviews]</parent-name>
+            <remote-alias>ReviewID</remote-alias>
+            <ordinal>30</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+            <object-id>[reviews_2BA12027953D4856B7908B203118721F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>UserID</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[UserID (reviews)]</local-name>
+            <parent-name>[reviews]</parent-name>
+            <remote-alias>UserID</remote-alias>
+            <ordinal>31</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+            <object-id>[reviews_2BA12027953D4856B7908B203118721F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>OrderID</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[OrderID (reviews)]</local-name>
+            <parent-name>[reviews]</parent-name>
+            <remote-alias>OrderID</remote-alias>
+            <ordinal>32</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+            <object-id>[reviews_2BA12027953D4856B7908B203118721F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProductID</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[ProductID (reviews)]</local-name>
+            <parent-name>[reviews]</parent-name>
+            <remote-alias>ProductID</remote-alias>
+            <ordinal>33</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+            <object-id>[reviews_2BA12027953D4856B7908B203118721F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Rating</remote-name>
+            <remote-type>4</remote-type>
+            <local-name>[Rating]</local-name>
+            <parent-name>[reviews]</parent-name>
+            <remote-alias>Rating</remote-alias>
+            <ordinal>34</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>6</precision>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_REAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_FLOAT&quot;</attribute>
+            </attributes>
+            <object-id>[reviews_2BA12027953D4856B7908B203118721F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ReviewText</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[ReviewText]</local-name>
+            <parent-name>[reviews]</parent-name>
+            <remote-alias>ReviewText</remote-alias>
+            <ordinal>35</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>262140</width>
+            <contains-null>true</contains-null>
+            <cast-to-local-type>true</cast-to-local-type>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WLONGVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+            </attributes>
+            <object-id>[reviews_2BA12027953D4856B7908B203118721F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ReviewDate</remote-name>
+            <remote-type>7</remote-type>
+            <local-name>[ReviewDate]</local-name>
+            <parent-name>[reviews]</parent-name>
+            <remote-alias>ReviewDate</remote-alias>
+            <ordinal>36</ordinal>
+            <local-type>date</local-type>
+            <aggregation>Year</aggregation>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TYPE_DATE&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_TYPE_DATE&quot;</attribute>
+            </attributes>
+            <object-id>[reviews_2BA12027953D4856B7908B203118721F]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProductID</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[ProductID (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>ProductID</remote-alias>
+            <ordinal>38</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ProductName</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[ProductName (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>ProductName</remote-alias>
+            <ordinal>39</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>100</width>
+            <contains-null>false</contains-null>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='TypeIsVarchar'>&quot;true&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Description</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[Description (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>Description</remote-alias>
+            <ordinal>40</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>262140</width>
+            <contains-null>true</contains-null>
+            <cast-to-local-type>true</cast-to-local-type>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WLONGVARCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>Category</remote-name>
+            <remote-type>130</remote-type>
+            <local-name>[Category (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>Category</remote-alias>
+            <ordinal>41</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <width>11</width>
+            <contains-null>true</contains-null>
+            <padded-semantics>true</padded-semantics>
+            <collation charset='296' flag='3' name='LROOT_S1' />
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_WCHAR&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_WCHAR&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>CostPrice</remote-name>
+            <remote-type>131</remote-type>
+            <local-name>[CostPrice (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>CostPrice</remote-alias>
+            <ordinal>42</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <scale>2</scale>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_DECIMAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_NUMERIC&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>RetailPrice</remote-name>
+            <remote-type>131</remote-type>
+            <local-name>[RetailPrice (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>RetailPrice</remote-alias>
+            <ordinal>43</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <scale>2</scale>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_DECIMAL&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_NUMERIC&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>StockQuantity</remote-name>
+            <remote-type>3</remote-type>
+            <local-name>[StockQuantity (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>StockQuantity</remote-alias>
+            <ordinal>44</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>10</precision>
+            <contains-null>false</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_INTEGER&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_SLONG&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>is_discontinued</remote-name>
+            <remote-type>16</remote-type>
+            <local-name>[is_discontinued (products1)]</local-name>
+            <parent-name>[products1]</parent-name>
+            <remote-alias>is_discontinued</remote-alias>
+            <ordinal>45</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <precision>3</precision>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_TINYINT&quot;</attribute>
+              <attribute datatype='string' name='DebugWireType'>&quot;SQL_C_STINYINT&quot;</attribute>
+            </attributes>
+            <object-id>[products_73336866769A44A7A0AD515BB6FD3BD0]</object-id>
+          </metadata-record>
         </metadata-records>
       </connection>
       <aliases enabled='yes' />
@@ -534,23 +815,33 @@
       <column caption='Line Price' datatype='real' name='[LinePrice]' role='measure' type='quantitative' />
       <column caption='Order Date' datatype='datetime' name='[OrderDate]' role='dimension' type='ordinal' />
       <column aggregation='Sum' datatype='integer' name='[OrderID (lineitems)]' role='dimension' type='ordinal' />
+      <column aggregation='Sum' datatype='integer' name='[OrderID (reviews)]' role='dimension' type='ordinal' />
       <column caption='Order ID' datatype='integer' name='[OrderID]' role='dimension' type='ordinal' />
       <column caption='Order Status' datatype='string' name='[OrderStatus]' role='dimension' type='nominal' />
       <column caption='Password Hash' datatype='string' name='[PasswordHash]' role='dimension' type='nominal' />
       <column aggregation='Sum' datatype='integer' name='[ProductID (products)]' role='dimension' type='ordinal' />
+      <column aggregation='Sum' datatype='integer' name='[ProductID (products1)]' role='dimension' type='ordinal' />
+      <column aggregation='Sum' datatype='integer' name='[ProductID (reviews)]' role='dimension' type='ordinal' />
       <column aggregation='Sum' caption='Product ID' datatype='integer' name='[ProductID]' role='dimension' type='ordinal' />
       <column caption='Product Name' datatype='string' name='[ProductName]' role='dimension' type='nominal' />
       <column caption='Registration Date' datatype='date' name='[RegistrationDate]' role='dimension' type='ordinal' />
       <column caption='Retail Price' datatype='real' name='[RetailPrice]' role='measure' type='quantitative' />
+      <column caption='Review Date' datatype='date' name='[ReviewDate]' role='dimension' type='ordinal' />
+      <column caption='Review ID' datatype='integer' name='[ReviewID]' role='dimension' type='ordinal' />
+      <column caption='Review Text' datatype='string' name='[ReviewText]' role='dimension' type='nominal' />
       <column caption='Stock Quantity' datatype='integer' name='[StockQuantity]' role='measure' type='quantitative' />
       <column aggregation='Sum' datatype='integer' name='[UserID (customers)]' role='dimension' type='ordinal' />
+      <column aggregation='Sum' datatype='integer' name='[UserID (reviews)]' role='dimension' type='ordinal' />
       <column caption='User ID' datatype='integer' name='[UserID]' role='dimension' type='ordinal' />
       <column datatype='string' name='[Username]' role='dimension' type='nominal' />
       <column caption='customers' datatype='table' name='[__tableau_internal_object_id__].[customers_376CB244528645F9B1CEAB1F6EF76D5B]' role='measure' type='quantitative' />
       <column caption='lineitems' datatype='table' name='[__tableau_internal_object_id__].[lineitems_AED1377FB43849048B5385239E1BEF71]' role='measure' type='quantitative' />
       <column caption='orders' datatype='table' name='[__tableau_internal_object_id__].[orders_C479BED71B2641EAA37113B9E3AB1EA1]' role='measure' type='quantitative' />
+      <column caption='products1' datatype='table' name='[__tableau_internal_object_id__].[products_73336866769A44A7A0AD515BB6FD3BD0]' role='measure' type='quantitative' />
       <column caption='products' datatype='table' name='[__tableau_internal_object_id__].[products_9741205A5298407EBBA8B4B007BF5002]' role='measure' type='quantitative' />
+      <column caption='reviews' datatype='table' name='[__tableau_internal_object_id__].[reviews_2BA12027953D4856B7908B203118721F]' role='measure' type='quantitative' />
       <column caption='users' datatype='table' name='[__tableau_internal_object_id__].[users_612A5FD0064B432C9D2AD62A17B557E7]' role='measure' type='quantitative' />
+      <column caption='Is Discontinued (Products1)' datatype='integer' name='[is_discontinued (products1)]' role='measure' type='quantitative' />
       <column caption='Is Discontinued' datatype='integer' name='[is_discontinued]' role='measure' type='quantitative' />
       <group caption='Action (Last Purchase Date,Username)' hidden='true' name='[Action (Last Purchase Date,Username)]' name-style='unqualified' user:auto-column='sheet_link'>
         <groupfilter function='crossjoin'>
@@ -563,7 +854,7 @@
           <groupfilter function='level-members' level='[ProductName]' />
         </groupfilter>
       </group>
-      <layout common-percentage='0.946429' dim-ordering='alphabetic' measure-ordering='alphabetic' parameter-percentage='0.0535714' show-structure='true' user-set-layout-v2='true' />
+      <layout common-percentage='0.946537' dim-ordering='alphabetic' measure-ordering='alphabetic' parameter-percentage='0.0534629' show-structure='true' user-set-layout-v2='true' />
       <semantic-values>
         <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
       </semantic-values>
@@ -584,9 +875,19 @@
               <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='orders' table='[orders]' type='table' />
             </properties>
           </object>
+          <object caption='products1' id='products_73336866769A44A7A0AD515BB6FD3BD0'>
+            <properties context=''>
+              <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='products1' table='[products]' type='table' />
+            </properties>
+          </object>
           <object caption='products' id='products_9741205A5298407EBBA8B4B007BF5002'>
             <properties context=''>
               <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='products' table='[products]' type='table' />
+            </properties>
+          </object>
+          <object caption='reviews' id='reviews_2BA12027953D4856B7908B203118721F'>
+            <properties context=''>
+              <relation connection='mysql.0o4cop8034m9ul11srk6h15go8ci' name='reviews' table='[reviews]' type='table' />
             </properties>
           </object>
           <object caption='users' id='users_612A5FD0064B432C9D2AD62A17B557E7'>
@@ -622,11 +923,27 @@
           </relationship>
           <relationship>
             <expression op='='>
+              <expression op='[ProductID (reviews)]' />
+              <expression op='[ProductID (products1)]' />
+            </expression>
+            <first-end-point guaranteed-value='true' is-db-set-guaranteed-value='true' object-id='reviews_2BA12027953D4856B7908B203118721F' />
+            <second-end-point is-db-set-unique-key='true' object-id='products_73336866769A44A7A0AD515BB6FD3BD0' unique-key='true' />
+          </relationship>
+          <relationship>
+            <expression op='='>
               <expression op='[ProductID]' />
               <expression op='[ProductID (products)]' />
             </expression>
             <first-end-point guaranteed-value='true' is-db-set-guaranteed-value='true' object-id='lineitems_AED1377FB43849048B5385239E1BEF71' />
             <second-end-point is-db-set-unique-key='true' object-id='products_9741205A5298407EBBA8B4B007BF5002' unique-key='true' />
+          </relationship>
+          <relationship>
+            <expression op='='>
+              <expression op='[UserID (customers)]' />
+              <expression op='[UserID (reviews)]' />
+            </expression>
+            <first-end-point object-id='customers_376CB244528645F9B1CEAB1F6EF76D5B' />
+            <second-end-point object-id='reviews_2BA12027953D4856B7908B203118721F' />
           </relationship>
         </relationships>
       </object-graph>
