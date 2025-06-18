@@ -1,6 +1,8 @@
 -- Create the database
+DROP DATABASE IF EXISTS ECommerceDB;
 CREATE DATABASE IF NOT EXISTS ECommerceDB;
 USE ECommerceDB;
+
 -- Create User table
 CREATE TABLE IF NOT EXISTS Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,9 +43,9 @@ CREATE TABLE IF NOT EXISTS Orders (
         ON DELETE CASCADE
 );
 
--- Create Transaction table
-CREATE TABLE IF NOT EXISTS Transactions (
-    TransactionID INT AUTO_INCREMENT PRIMARY KEY,
+-- Create Payment table
+CREATE TABLE IF NOT EXISTS Payments (
+    PaymentID INT AUTO_INCREMENT PRIMARY KEY,
     OrderID INT UNIQUE NOT NULL,
     PaymentAmount DECIMAL(10 , 2 ) NOT NULL,
     PaymentDate DATETIME NOT NULL,
@@ -54,13 +56,13 @@ CREATE TABLE IF NOT EXISTS Transactions (
 
 -- Create LineItem table
 CREATE TABLE IF NOT EXISTS LineItems (
-    TransactionID INT NOT NULL,
+    PaymentID INT NOT NULL,
     ProductID INT NOT NULL,
     LinePrice DECIMAL(10 , 2 ) NOT NULL,
     Quantity INT NOT NULL CHECK (Quantity > 0),
-    PRIMARY KEY (TransactionID , ProductID),
-    FOREIGN KEY (TransactionID)
-        REFERENCES Transactions (TransactionID)
+    PRIMARY KEY (PaymentID , ProductID),
+    FOREIGN KEY (PaymentID)
+        REFERENCES Payments (PaymentID)
         ON DELETE CASCADE,
     FOREIGN KEY (ProductID)
         REFERENCES Products (ProductID)
@@ -139,8 +141,8 @@ INSERT INTO Orders (CustomerID, OrderDate) VALUES
 (9, '2023-11-09 10:05:00'),
 (10, '2023-11-10 14:15:00');
 
--- Insert sample transactions 
-INSERT INTO Transactions (OrderID, PaymentAmount, PaymentDate) VALUES
+-- Insert sample payments
+INSERT INTO Payments (OrderID, PaymentAmount, PaymentDate) VALUES
 (1, 799.99, '2023-11-01 10:20:00'),
 (2, 1299.99, '2023-11-02 14:35:00'),
 (3, 199.99, '2023-11-03 09:50:00'),
@@ -153,7 +155,7 @@ INSERT INTO Transactions (OrderID, PaymentAmount, PaymentDate) VALUES
 (10, 199.99, '2023-11-10 14:20:00');
 
 -- Insert sample line items 
-INSERT INTO LineItems (TransactionID, ProductID, LinePrice, Quantity) VALUES
+INSERT INTO LineItems (PaymentID, ProductID, LinePrice, Quantity) VALUES
 (1, 1, 799.99, 2),
 (2, 2, 1299.99, 1),
 (3, 3, 199.99, 3),
@@ -211,9 +213,9 @@ FROM
         JOIN
     LineItems li ON p.ProductID = li.ProductID
         JOIN
-    Transactions t ON li.TransactionID = t.TransactionID
+    Payments pay ON li.PaymentID = pay.PaymentID
         JOIN
-    Orders o ON t.OrderID = o.OrderID
+    Orders o ON pay.OrderID = o.OrderID
 WHERE
     o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
 GROUP BY p.ProductID , p.Name
@@ -230,9 +232,9 @@ FROM
         LEFT JOIN
     LineItems li ON p.ProductID = li.ProductID
         LEFT JOIN
-    Transactions t ON li.TransactionID = t.TransactionID
+    Payments pay ON li.PaymentID = pay.PaymentID
         LEFT JOIN
-    Orders o ON t.OrderID = o.OrderID
+    Orders o ON pay.OrderID = o.OrderID
         AND o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
 GROUP BY p.ProductID , p.Name
 ORDER BY TotalSold ASC
@@ -255,7 +257,7 @@ HAVING LastPurchaseDate IS NULL
     OR LastPurchaseDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
 ORDER BY LastPurchaseDate;
 
--- 7a.  products users normally purchase 
+-- 7a. products users normally purchase 
 WITH InactiveUsers AS (
     SELECT u.UserID, c.CustomerID
     FROM Users u
@@ -267,10 +269,9 @@ WITH InactiveUsers AS (
 SELECT iu.UserID, p.ProductID, p.Name, COUNT(*) AS PurchaseCount
 FROM InactiveUsers iu
 JOIN Orders o ON iu.CustomerID = o.CustomerID
-JOIN Transactions t ON o.OrderID = t.OrderID
-JOIN LineItems li ON t.TransactionID = li.TransactionID
+JOIN Payments pay ON o.OrderID = pay.OrderID
+JOIN LineItems li ON pay.PaymentID = li.PaymentID
 JOIN Products p ON li.ProductID = p.ProductID
-WHERE o.OrderDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH) -- only *historical* purchasescustomersCustomerID
+WHERE o.OrderDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
 GROUP BY iu.UserID, p.ProductID, p.Name
 ORDER BY iu.UserID, PurchaseCount DESC;
-
