@@ -1,31 +1,28 @@
 /***********************************************************************
 E-Commerce Dashboard Validation Queries
- Abdulfeatah Adem and Krick
-
-
 ***********************************************************************/
 
 /* 1. Products Currently in Inventory and Quantities */
 SELECT 
     p.ProductID,
-    p.ProductName,
+    p.Name,
     p.StockQuantity
 FROM
     Products AS p
 WHERE
     p.StockQuantity > 0
 ORDER BY
-    p.ProductName;
+    p.Name;
 
-/* 2. Products with Low Stock Levels (Less than 10 units) */
+/* 2. Products with Low Stock Levels (Less than 100 units) */
 SELECT 
     p.ProductID,
-    p.ProductName,
+    p.Name,
     p.StockQuantity
 FROM
     Products AS p
 WHERE
-    p.StockQuantity < 10
+    p.StockQuantity < 100
 ORDER BY
     p.StockQuantity ASC;
 
@@ -33,7 +30,7 @@ ORDER BY
 /* Sample date range used: 2025-01-01 to 2025-03-31 */
 SELECT 
     li.ProductID,
-    p.ProductName,
+    p.Name,
     SUM(li.Quantity) AS TotalQuantitySold
 FROM
     LineItems li
@@ -43,7 +40,7 @@ WHERE
     o.OrderDate BETWEEN '2025-01-01' AND '2025-03-31'
 GROUP BY
     li.ProductID,
-    p.ProductName
+    p.Name
 ORDER BY
     TotalQuantitySold DESC
 LIMIT 10;
@@ -52,7 +49,7 @@ LIMIT 10;
 /* Including products with zero sales */
 SELECT 
     p.ProductID,
-    p.ProductName,
+    p.Name,
     COALESCE(SUM(li.Quantity), 0) AS TotalQuantitySold
 FROM
     Products p
@@ -61,13 +58,12 @@ FROM
         AND o.OrderDate BETWEEN '2025-01-01' AND '2025-03-31'
 GROUP BY
     p.ProductID,
-    p.ProductName
+    p.Name
 ORDER BY
     TotalQuantitySold ASC
 LIMIT 10;
 
-/* 5. Users Who Have Not Made a Purchase in the Last X Months */
-/* Sample interval: 6 months before current date */
+/* 5. Users Who Have Not Made a Purchase in the Last 6 Months */
 SELECT 
     u.UserID,
     u.Username,
@@ -85,7 +81,7 @@ HAVING
 ORDER BY
     LastPurchaseDate ASC;
 
-/* 6. Typical Purchases by Users Inactive in the Last X Months */
+/* 6. Typical Purchases by Users Inactive in the Last 6 Months */
 /* Lists top 5 categories by purchase count */
 SELECT 
     p.Category,
@@ -120,7 +116,7 @@ LIMIT 5;
 /* Top 10 products ordered by creation date descending */
 SELECT 
     p.ProductID,
-    p.ProductName,
+    p.Name,
     p.Category,
     p.CreatedDate
 FROM
