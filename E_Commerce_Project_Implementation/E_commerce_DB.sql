@@ -1,12 +1,14 @@
 -- Create the database
+DROP DATABASE IF EXISTS ECommerceDB;
 CREATE DATABASE IF NOT EXISTS ECommerceDB;
 USE ECommerceDB;
 -- Create User table
+
 CREATE TABLE IF NOT EXISTS Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     Email VARCHAR(100) UNIQUE NOT NULL,
     Username VARCHAR(50) UNIQUE NOT NULL,
-    Password VARCHAR(255) NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
     RegistrationDate DATE NOT NULL
 );
 
@@ -14,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Customers (
     CustomerID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT UNIQUE NOT NULL,
-    Address TEXT NOT NULL,
+    Address VARCHAR(255) NOT NULL,
     FOREIGN KEY (UserID)
         REFERENCES Users (UserID)
         ON DELETE CASCADE
@@ -23,12 +25,13 @@ CREATE TABLE IF NOT EXISTS Customers (
 -- Create Product table
 CREATE TABLE IF NOT EXISTS Products (
     ProductID INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(100) NOT NULL,
+    ProductName VARCHAR(100) NOT NULL,
     Description TEXT,
-    Category ENUM('Electronics', 'Clothing', 'Home', 'Books', 'Other') NOT NULL,
-    Cost DECIMAL(10 , 2 ) NOT NULL,
-    MSRP DECIMAL(10 , 2 ) NOT NULL,
-    StockQuantity INT NOT NULL CHECK (StockQuantity >= 0)
+    Category ENUM('Electronics', 'Clothing', 'Home', 'Books', 'Other'),
+    CostPrice DECIMAL(10 , 2 ) NOT NULL,
+    RetailPrice DECIMAL(10 , 2 ) NOT NULL,
+    StockQuantity INT NOT NULL CHECK (StockQuantity >= 0),
+    is_discontinued BOOLEAN DEFAULT FALSE
 );
 
 -- Create Order table
@@ -36,15 +39,16 @@ CREATE TABLE IF NOT EXISTS Orders (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
     CustomerID INT NOT NULL,
     OrderDate DATETIME NOT NULL,
+    OrderStatus ENUM('Cancelled','Unpaid','Paid','Shipped','Fulfilled') NOT NULL DEFAULT 'Unpaid',
     FOREIGN KEY (CustomerID)
         REFERENCES Customers (CustomerID)
         ON DELETE CASCADE
 );
 
--- Create Transaction table
-CREATE TABLE IF NOT EXISTS Transactions (
-    TransactionID INT AUTO_INCREMENT PRIMARY KEY,
-    OrderID INT UNIQUE NOT NULL,
+-- Create Payment table
+CREATE TABLE IF NOT EXISTS Payments (
+    PaymentID INT AUTO_INCREMENT PRIMARY KEY,
+    OrderID INT NOT NULL,
     PaymentAmount DECIMAL(10 , 2 ) NOT NULL,
     PaymentDate DATETIME NOT NULL,
     FOREIGN KEY (OrderID)
@@ -54,13 +58,13 @@ CREATE TABLE IF NOT EXISTS Transactions (
 
 -- Create LineItem table
 CREATE TABLE IF NOT EXISTS LineItems (
-    TransactionID INT NOT NULL,
+    OrderID INT NOT NULL,
     ProductID INT NOT NULL,
     LinePrice DECIMAL(10 , 2 ) NOT NULL,
     Quantity INT NOT NULL CHECK (Quantity > 0),
-    PRIMARY KEY (TransactionID , ProductID),
-    FOREIGN KEY (TransactionID)
-        REFERENCES Transactions (TransactionID)
+    PRIMARY KEY (OrderID , ProductID),
+    FOREIGN KEY (OrderID)
+        REFERENCES Orders (OrderID)
         ON DELETE CASCADE,
     FOREIGN KEY (ProductID)
         REFERENCES Products (ProductID)
@@ -70,8 +74,8 @@ CREATE TABLE IF NOT EXISTS LineItems (
 -- Create Review table
 CREATE TABLE IF NOT EXISTS Reviews (
     ReviewID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT NOT NULL,
-    OrderID INT NOT NULL,
+    UserID INT,
+    OrderID INT,
     ProductID INT NOT NULL,
     Rating FLOAT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
     ReviewText TEXT,
@@ -81,24 +85,24 @@ CREATE TABLE IF NOT EXISTS Reviews (
         ON DELETE CASCADE,
     FOREIGN KEY (OrderID)
         REFERENCES Orders (OrderID)
-        ON DELETE CASCADE,
+        ON DELETE SET NULL,
     FOREIGN KEY (ProductID)
         REFERENCES Products (ProductID)
         ON DELETE CASCADE
 );
 
 -- Insert sample users
-INSERT INTO Users (Email, Username, Password, RegistrationDate) VALUES
-('abebe.kebede@gmail.com', 'abebe_kebede', 'Abebe!2020', '2020-03-12'),
-('mekdes.tsegaye@yahoo.com', 'mekdes_tsegaye', 'Mekdes#2021', '2021-07-24'),
-('getachew.mulu@gmail.com', 'getachew_mulu', 'Getachew@2022', '2022-01-15'),
-('ayele.debebe@gmail.com', 'ayele_debebe', 'Ayele$2023', '2023-05-06'),
-('tsehay.yilma@yahoo.com', 'tsehay_yilma', 'Tsehay%2024', '2024-09-30'),
-('emily.smith@gmail.com', 'emily_smith', 'Emily123!', '2021-02-10'),
-('michael.johnson@yahoo.com', 'michael_johnson', 'Michael456!', '2022-04-22'),
-('sarah.jones@gmail.com', 'sarah_jones', 'Sarah789!', '2020-11-05'),
-('william.brown@yahoo.com', 'william_brown', 'WilliamABC!', '2023-08-19'),
-('jessica.miller@gmail.com', 'jessica_miller', 'JessicaXYZ!', '2024-03-27');
+INSERT INTO Users (Email, Username, PasswordHash, RegistrationDate) VALUES
+('abebe.kebede@gmail.com', 'abebe_kebede', '23w4g56gwesnrt6756e45', '2020-03-12'),
+('mekdes.tsegaye@yahoo.com', 'mekdes_tsegaye', 'b23452345gbwetb', '2021-07-24'),
+('getachew.mulu@gmail.com', 'getachew_mulu', 'bw45bwe45w423b52', '2022-01-15'),
+('ayele.debebe@gmail.com', 'ayele_debebe', 'b3456weebrtbt2wb', '2023-05-06'),
+('tsehay.yilma@yahoo.com', 'tsehay_yilma', '84n5e67en34q5n8en6', '2024-09-30'),
+('emily.smith@gmail.com', 'emily_smith', 'm06olree5b4we4nyrmetem', '2021-02-10'),
+('michael.johnson@yahoo.com', 'michael_johnson', '895567me6dh556eg3465', '2022-04-22'),
+('sarah.jones@gmail.com', 'sarah_jones', '34567j7357etnydr5648er57', '2020-11-05'),
+('william.brown@yahoo.com', 'william_brown', '3457e576ne6ffd65g38534', '2023-08-19'),
+('jessica.miller@gmail.com', 'jessica_miller', 'd56md5r7m58354673n667r8', '2024-03-27');
 
 -- Insert sample customers
 INSERT INTO Customers (UserID, Address) VALUES
@@ -114,7 +118,7 @@ INSERT INTO Customers (UserID, Address) VALUES
 (10, '482 Broadway, New York, NY');
 
 -- Insert sample products
-INSERT INTO Products (Name, Description, Category, Cost, MSRP, StockQuantity) VALUES
+INSERT INTO Products (ProductName, Description, Category, CostPrice, RetailPrice, StockQuantity) VALUES
 ('Smartphone X', 'Latest smartphone with advanced features', 'Electronics', 500.00, 799.99, 50),
 ('Laptop Pro', 'High-performance laptop for professionals', 'Electronics', 800.00, 1299.99, 30),
 ('Wireless Headphones', 'Noise-cancelling wireless headphones', 'Electronics', 100.00, 199.99, 100),
@@ -139,8 +143,8 @@ INSERT INTO Orders (CustomerID, OrderDate) VALUES
 (9, '2023-11-09 10:05:00'),
 (10, '2023-11-10 14:15:00');
 
--- Insert sample transactions 
-INSERT INTO Transactions (OrderID, PaymentAmount, PaymentDate) VALUES
+-- Insert sample payments 
+INSERT INTO Payments (OrderID, PaymentAmount, PaymentDate) VALUES
 (1, 799.99, '2023-11-01 10:20:00'),
 (2, 1299.99, '2023-11-02 14:35:00'),
 (3, 199.99, '2023-11-03 09:50:00'),
@@ -153,7 +157,7 @@ INSERT INTO Transactions (OrderID, PaymentAmount, PaymentDate) VALUES
 (10, 199.99, '2023-11-10 14:20:00');
 
 -- Insert sample line items 
-INSERT INTO LineItems (TransactionID, ProductID, LinePrice, Quantity) VALUES
+INSERT INTO LineItems (OrderID, ProductID, LinePrice, Quantity) VALUES
 (1, 1, 799.99, 2),
 (2, 2, 1299.99, 1),
 (3, 3, 199.99, 3),
@@ -180,15 +184,15 @@ INSERT INTO Reviews (UserID, OrderID, ProductID, Rating, ReviewText, ReviewDate)
 
 -- 1. List products currently in inventory
 SELECT 
-    ProductID, Name, StockQuantity
+    ProductID, ProductName, StockQuantity
 FROM
     Products
 WHERE
     StockQuantity > 0
-ORDER BY Name;
+ORDER BY ProductName;
 
 -- 2. Create new product
-INSERT INTO Products (Name, Description, Category, Cost, MSRP, StockQuantity) 
+INSERT INTO Products (ProductName, Description, Category, CostPrice, RetailPrice, StockQuantity) 
 VALUES ('Bluetooth Speaker', 'Portable wireless speaker with high-fidelity sound', 'Electronics', 25.00, 59.99, 40);
 
 -- 3. Modify product inventory amount
@@ -205,36 +209,34 @@ WHERE
 
 -- 5. Most popular products for a time range
 SELECT 
-    p.ProductID, p.Name, SUM(li.Quantity) AS TotalSold
+    p.ProductID, p.ProductName, SUM(li.Quantity) AS TotalSold
 FROM
     Products p
-        JOIN
-    LineItems li ON p.ProductID = li.ProductID
-        JOIN
-    Transactions t ON li.TransactionID = t.TransactionID
-        JOIN
-    Orders o ON t.OrderID = o.OrderID
+        JOIN LineItems li 
+			ON p.ProductID = li.ProductID
+        JOIN Payments t 
+			ON li.OrderID = t.OrderID
+        JOIN Orders o 
+			ON t.OrderID = o.OrderID
 WHERE
     o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
-GROUP BY p.ProductID , p.Name
+GROUP BY p.ProductID , p.ProductName
 ORDER BY TotalSold DESC
 LIMIT 5;
 
 -- 6. Least popular products for a time range
 SELECT 
     p.ProductID,
-    p.Name,
+    p.ProductName,
     COALESCE(SUM(li.Quantity), 0) AS TotalSold
 FROM
     Products p
-        LEFT JOIN
-    LineItems li ON p.ProductID = li.ProductID
-        LEFT JOIN
-    Transactions t ON li.TransactionID = t.TransactionID
-        LEFT JOIN
-    Orders o ON t.OrderID = o.OrderID
+        LEFT JOIN LineItems li
+			ON p.ProductID = li.ProductID
+        LEFT JOIN Orders o
+			ON li.OrderID = o.OrderID
         AND o.OrderDate BETWEEN '2023-11-01' AND '2023-11-30'
-GROUP BY p.ProductID , p.Name
+GROUP BY p.ProductID , p.ProductName
 ORDER BY TotalSold ASC
 LIMIT 5;
 
@@ -246,10 +248,10 @@ SELECT
     MAX(o.OrderDate) AS LastPurchaseDate
 FROM
     Users u
-        JOIN
-    Customers c ON u.UserID = c.UserID
-        LEFT JOIN
-    Orders o ON c.CustomerID = o.CustomerID
+        JOIN Customers c
+			ON u.UserID = c.UserID
+        LEFT JOIN Orders o
+			ON c.CustomerID = o.CustomerID
 GROUP BY u.UserID , u.Email , u.Username
 HAVING LastPurchaseDate IS NULL
     OR LastPurchaseDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
@@ -259,18 +261,22 @@ ORDER BY LastPurchaseDate;
 WITH InactiveUsers AS (
     SELECT u.UserID, c.CustomerID
     FROM Users u
-    JOIN Customers c ON u.UserID = c.UserID
-    LEFT JOIN Orders o ON c.CustomerID = o.CustomerID
+    JOIN Customers c 
+		ON u.UserID = c.UserID
+    LEFT JOIN Orders o 
+		ON c.CustomerID = o.CustomerID
     GROUP BY u.UserID, c.CustomerID
     HAVING MAX(o.OrderDate) IS NULL OR MAX(o.OrderDate) < DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
 )
-SELECT iu.UserID, p.ProductID, p.Name, COUNT(*) AS PurchaseCount
+SELECT iu.UserID, p.ProductID, p.ProductName, COUNT(*) AS PurchaseCount
 FROM InactiveUsers iu
-JOIN Orders o ON iu.CustomerID = o.CustomerID
-JOIN Transactions t ON o.OrderID = t.OrderID
-JOIN LineItems li ON t.TransactionID = li.TransactionID
-JOIN Products p ON li.ProductID = p.ProductID
+JOIN Orders o 
+	ON iu.CustomerID = o.CustomerID
+JOIN LineItems li 
+	ON li.OrderID = li.OrderID
+JOIN Products p 
+	ON li.ProductID = p.ProductID
 WHERE o.OrderDate < DATE_SUB(CURDATE(), INTERVAL 3 MONTH) -- only *historical* purchasescustomersCustomerID
-GROUP BY iu.UserID, p.ProductID, p.Name
+GROUP BY iu.UserID, p.ProductID, p.ProductName
 ORDER BY iu.UserID, PurchaseCount DESC;
 
